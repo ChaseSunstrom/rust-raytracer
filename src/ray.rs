@@ -27,4 +27,8 @@ impl Ray {
     pub fn get_direction(&self) -> Vec3 {
         self.dir
     }
+
+    pub fn at(&self, t: f64) -> Point3 {
+        self.orig + self.dir * t
+    }
 }

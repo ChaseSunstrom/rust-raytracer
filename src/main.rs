@@ -8,11 +8,9 @@ use crate::vec3::{Point3, Vec3};
 use crate::ray::*;
 use crate::color::*;
 
-const IMAGE_WIDTH: f64 = 512.0;
+const IMAGE_WIDTH: f64 = 8192.0;
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_HEIGHT: f64 = IMAGE_WIDTH / ASPECT_RATIO;
-
-
 
 fn main() {
 
