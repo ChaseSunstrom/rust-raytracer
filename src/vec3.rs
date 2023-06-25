@@ -91,6 +91,31 @@ impl Vec3 {
         }
     }
 
+    pub fn random_unit_vector() -> Vec3 {
+        unit_vector(Vec3::random_in_unit_sphere())
+    }
+
+    pub fn random_in_hemisphere(normal: Vec3) -> Vec3 {
+        let in_unit_sphere = Vec3::random_in_unit_sphere();
+        if Vec3::dot(in_unit_sphere, normal) > 0.0 {
+            in_unit_sphere
+        } else {
+            -in_unit_sphere
+        }
+
+    }
+
+    pub fn near_zero(&self) -> bool {
+        let s = 1e-8;
+        self.value[0].abs() < s &&
+        self.value[1].abs() < s &&
+        self.value[2].abs() < s
+    }
+
+    pub fn reflect(v: &mut Vec3, n: &Vec3) -> Vec3 {
+        *v - 2.0 * Vec3::dot(*v, *n) * *n
+    }
+
     pub fn print(&self) {
         println!("{} {} {}",
                  self.value[0],

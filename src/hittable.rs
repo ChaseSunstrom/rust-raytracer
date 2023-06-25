@@ -1,12 +1,14 @@
 use std::rc::Rc;
 use crate::vec3::{Point3, Vec3};
 use crate::ray::*;
+use crate::material::*;
 
 pub struct HitRecord {
     pub p: Point3,
     pub normal: Vec3,
     pub t: f64,
-    pub front_face: bool
+    pub front_face: bool,
+    pub material: Vec<Rc<dyn Material>>,
 }
 
 pub struct HittableList {
@@ -70,7 +72,8 @@ impl HitRecord {
             p: Point3::default(),
             normal: Vec3::default(),
             t: 0.,
-            front_face: false
+            front_face: false,
+            material: vec![]
         }
     }
 }

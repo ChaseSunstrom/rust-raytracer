@@ -10,9 +10,9 @@ pub fn write_color(pixel_color: Color, samples_per_pixel: u32) {
 
     let scale = 1.0 / samples_per_pixel as f64;
 
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    r = (r* scale).sqrt();
+    g = (g * scale).sqrt();
+    b = (b * scale).sqrt();
 
     println!("{} {} {}",
         (256.0 * clamp(r, 0.0, 0.999)),
@@ -27,9 +27,15 @@ pub fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i64) -> Color {
         return Color::default();
     }
 
-    if world.hit(ray, 0.0, INFINITY, &mut rec) {
-        let target = rec.p + rec.normal + Vec3::random_in_unit_sphere();
-        return 0.5 * ray_color(&Ray::new(rec.p, target - rec.p), world, depth - 1);
+    if world.hit(ray, 0.001, INFINITY, &mut rec) {
+        let mut scattered = Ray::default();
+        let mut attenuation = Color::default();
+
+        if rec.material[0].scatter(ray, &rec, &mut attenuation, &mut scattered) {
+            return attenuation * ray_color(&scattered, world, depth - 1)
+        }
+
+        return Color::default();
     }
 
     let unit_direction = unit_vector(ray.get_direction());
