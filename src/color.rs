@@ -2,7 +2,6 @@ use crate::ray::*;
 use crate::vec3::*;
 use crate::hittable::*;
 use crate::utility::*;
-use crate::vec3::Color;
 
 pub fn write_color(pixel_color: Color, samples_per_pixel: u32) {
     let mut r = pixel_color.get_x();
@@ -21,11 +20,18 @@ pub fn write_color(pixel_color: Color, samples_per_pixel: u32) {
         (256.0 * clamp(b, 0.0, 0.999)));
 }
 
-pub fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color {
+pub fn ray_color(ray: &Ray, world: &dyn Hittable, depth: i64) -> Color {
     let mut rec = HitRecord::default();
-    if world.hit(ray, 0.0, INFINITY, &mut rec) {
-        return 0.5 * (rec.normal + Color::new(1.0, 1.0, 1.0));
+
+    if depth <= 0 {
+        return Color::default();
     }
+
+    if world.hit(ray, 0.0, INFINITY, &mut rec) {
+        let target = rec.p + rec.normal + Vec3::random_in_unit_sphere();
+        return 0.5 * ray_color(&Ray::new(rec.p, target - rec.p), world, depth - 1);
+    }
+
     let unit_direction = unit_vector(ray.get_direction());
     let t = 0.5 * (unit_direction.get_y() + 1.0);
     (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)

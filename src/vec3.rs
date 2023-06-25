@@ -1,5 +1,6 @@
 
 use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
+use crate::utility::{random_float, random_float_range};
 
 pub type Point3 = Vec3;
 pub type Color = Vec3;
@@ -57,6 +58,36 @@ impl Vec3 {
                 self.value[2] * other.value[0] - self.value[0] * other.value[2],
                 self.value[0] * other.value[1] - self.value[1] * other.value[0]
             ]
+        }
+    }
+
+    pub fn random() -> Vec3 {
+        Vec3 {
+            value: [
+                random_float(),
+                random_float(),
+                random_float()
+            ]
+        }
+    }
+
+    pub fn random_range(min: f64, max: f64) -> Vec3 {
+        Vec3 {
+            value: [
+                random_float_range(min, max),
+                random_float_range(min, max),
+                random_float_range(min, max)
+            ]
+        }
+    }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random_range(-1.0, 1.0);
+            if p.length_squared() >= 1.0 {
+                continue;
+            }
+            return p;
         }
     }
 

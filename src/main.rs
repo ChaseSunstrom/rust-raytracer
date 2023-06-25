@@ -8,7 +8,6 @@ mod camera;
 
 use std::fs::File;
 use std::rc::Rc;
-use image::{RgbImage, Rgb, ImageBuffer};
 use crate::vec3::{Color, Point3, Vec3};
 use crate::ray::*;
 use crate::color::*;
@@ -21,6 +20,7 @@ const IMAGE_WIDTH: f64 = 512.0;
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_HEIGHT: f64 = IMAGE_WIDTH / ASPECT_RATIO;
 const SAMPLES_PER_PIXEL: u32 = 100;
+const MAX_DEPTH: i64 = 50;
 
 fn main() {
 
@@ -44,11 +44,11 @@ fn main() {
         eprintln!("Scanlines remaining: {}", y);
         for x in 0..IMAGE_WIDTH as i64 {
             let mut pixel_color = Color::default();
-            for s in 0..SAMPLES_PER_PIXEL {
+            for _ in 0..SAMPLES_PER_PIXEL {
                 let u = (x as f64 + random_float()) / (IMAGE_WIDTH - 1.);
                 let v = (y as f64 + random_float()) / (IMAGE_HEIGHT - 1.);
                 let ray = camera.get_ray(u, v);
-                pixel_color += ray_color(&ray, &world);
+                pixel_color += ray_color(&ray, &world, MAX_DEPTH);
             }
 
             write_color(pixel_color, SAMPLES_PER_PIXEL);
