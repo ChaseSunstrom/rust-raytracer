@@ -6,14 +6,14 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new() -> Ray {
+    pub fn default() -> Ray {
         Ray {
-            orig: Point3::new(),
-            dir: Vec3::new()
+            orig: Point3::default(),
+            dir: Vec3::default()
         }
     }
 
-    pub fn new_with_values(orig: Point3, dir: Vec3) -> Ray {
+    pub fn new(orig: Point3, dir: Vec3) -> Ray {
         Ray {
             orig,
             dir

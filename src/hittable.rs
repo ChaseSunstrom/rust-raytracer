@@ -14,13 +14,13 @@ pub struct HittableList {
 }
 
 impl HittableList {
-    pub fn new() -> HittableList {
+    pub fn default() -> HittableList {
         HittableList {
             objects: Vec::new()
         }
     }
 
-    pub fn new_with_values(objects: Rc<dyn Hittable>) -> HittableList {
+    pub fn new(objects: Rc<dyn Hittable>) -> HittableList {
         HittableList {
             objects: vec![objects]
         }
@@ -43,7 +43,7 @@ impl Hittable for HittableList {
         let mut closest_so_far = t_max;
 
         for object in &self.objects {
-            let mut temp_rec = HitRecord::new();
+            let mut temp_rec = HitRecord::default();
             if object.hit(&ray, t_min, closest_so_far, &mut temp_rec) {
                 hit_anything = true;
                 closest_so_far = temp_rec.t;
@@ -65,10 +65,10 @@ impl HitRecord {
         };
     }
 
-    pub fn new() -> HitRecord {
+    pub fn default() -> HitRecord {
         HitRecord {
-            p: Point3::new(),
-            normal: Vec3::new(),
+            p: Point3::default(),
+            normal: Vec3::default(),
             t: 0.,
             front_face: false
         }

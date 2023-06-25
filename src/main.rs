@@ -4,60 +4,54 @@ mod ray;
 mod hittable;
 mod object;
 mod utility;
+mod camera;
 
 use std::fs::File;
 use std::rc::Rc;
 use image::{RgbImage, Rgb, ImageBuffer};
-use crate::vec3::{Point3, Vec3};
+use crate::vec3::{Color, Point3, Vec3};
 use crate::ray::*;
 use crate::color::*;
 use crate::hittable::*;
 use crate::object::*;
 use crate::utility::*;
+use crate::camera::*;
 
-const IMAGE_WIDTH: f64 = 1024.0;
+const IMAGE_WIDTH: f64 = 512.0;
 const ASPECT_RATIO: f64 = 16.0 / 9.0;
 const IMAGE_HEIGHT: f64 = IMAGE_WIDTH / ASPECT_RATIO;
+const SAMPLES_PER_PIXEL: u32 = 100;
 
 fn main() {
 
-    let mut buffer: RgbImage = ImageBuffer::new(IMAGE_WIDTH as u32, IMAGE_HEIGHT as u32);
+    println!("P3\n{} {}\n255", IMAGE_WIDTH, IMAGE_HEIGHT);
 
-    let mut world = HittableList::new();
+    let camera = Camera::default();
+
+    let mut world = HittableList::default();
     world.add(
         Rc::new(
-            Sphere::new_with_values(
-                Point3::new_with_values(0., 0., -1.), 0.5)
+            Sphere::new(
+                Point3::new(0., 0., -1.), 0.5)
         ));
     world.add(
         Rc::new(
-            Sphere::new_with_values(
-                Point3::new_with_values(0., -100.5, -1.), 100.)
+            Sphere::new(
+                Point3::new(0., -100.5, -1.), 100.)
         ));
 
-    let viewport_height = 2.0;
-    let viewport_width = ASPECT_RATIO * viewport_height;
-    let focal_length = 1.0;
+    for y in (0..IMAGE_HEIGHT as i64).rev() {
+        eprintln!("Scanlines remaining: {}", y);
+        for x in 0..IMAGE_WIDTH as i64 {
+            let mut pixel_color = Color::default();
+            for s in 0..SAMPLES_PER_PIXEL {
+                let u = (x as f64 + random_float()) / (IMAGE_WIDTH - 1.);
+                let v = (y as f64 + random_float()) / (IMAGE_HEIGHT - 1.);
+                let ray = camera.get_ray(u, v);
+                pixel_color += ray_color(&ray, &world);
+            }
 
-    let origin = Point3::new();
-    let horizontal = Vec3::new_with_values(viewport_width, 0., 0.);
-    let vertical = Vec3::new_with_values(0., viewport_height, 0.);
-    let lower_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new_with_values(0., 0., focal_length);
-
-
-    for (x, y, pixel) in buffer.enumerate_pixels_mut() {
-        let u = x as f64 / (IMAGE_WIDTH - 1.);
-        let v = 1.0 - y as f64 / (IMAGE_HEIGHT - 1.);
-        let ray_direction = lower_left_corner + u * horizontal + v * vertical - origin;
-        let ray = Ray::new_with_values(origin, ray_direction);
-        let pixel_color = ray_color(&ray, &world);
-
-        let ir = (255.999 * pixel_color.get_x()) as u8;
-        let ig = (255.999 * pixel_color.get_y()) as u8;
-        let ib = (255.999 * pixel_color.get_z()) as u8;
-
-        *pixel = Rgb([ir, ig, ib]);
+            write_color(pixel_color, SAMPLES_PER_PIXEL);
+        }
     }
-
-    buffer.save("raytracer.png").unwrap();
 }

@@ -1,5 +1,5 @@
 
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Neg, Sub};
 
 pub type Point3 = Vec3;
 pub type Color = Vec3;
@@ -10,11 +10,11 @@ pub struct Vec3 {
 }
 
 impl Vec3 {
-    pub fn new() -> Vec3 {
+    pub fn default() -> Vec3 {
         Vec3 { value: [0.0, 0.0, 0.0] }
     }
 
-    pub fn new_with_values(e0: f64, e1: f64, e2: f64) -> Vec3 {
+    pub fn new(e0: f64, e1: f64, e2: f64) -> Vec3 {
         Vec3 { value: [e0, e1, e2] }
     }
 
@@ -85,6 +85,14 @@ impl Add for Vec3 {
                 self.value[2] + other.value[2]
             ]
         }
+    }
+}
+
+impl AddAssign for Vec3 {
+    fn add_assign(&mut self, other: Vec3) {
+        self.value[0] += other.value[0];
+        self.value[1] += other.value[1];
+        self.value[2] += other.value[2];
     }
 }
 

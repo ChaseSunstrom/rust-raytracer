@@ -8,14 +8,14 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new() -> Sphere {
+    pub fn default() -> Sphere {
         Sphere {
-            center: Point3::new(),
+            center: Point3::default(),
             radius: 0.0
         }
     }
 
-    pub fn new_with_values(center: Point3, radius: f64) -> Sphere {
+    pub fn new(center: Point3, radius: f64) -> Sphere {
         Sphere {
             center,
             radius
