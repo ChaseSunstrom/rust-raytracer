@@ -18,4 +18,5 @@ https://cs.rhodes.edu/welshc/COMP141_F16/ppmReader.html
 ```
 
 The output image should be similar to this
+
 ![download](https://github.com/ChaseSunstrom/rust-raytracer/assets/122314695/6279f0da-8b95-4d3f-9d19-9eccf62b949f)
